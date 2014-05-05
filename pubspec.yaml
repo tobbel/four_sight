@@ -1,0 +1,9 @@
+name: four_sight
+description: A sample web application
+dependencies:
+  browser: any
+  three:
+    git:
+      ref: master
+      url: git://github.com/threeDart/three.dart.git
+  vector_math: any
