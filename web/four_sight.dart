@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:math';
 import 'package:three/three.dart';
 import 'package:vector_math/vector_math.dart';
 
@@ -6,13 +7,13 @@ Scene scene;
 PerspectiveCamera camera;
 WebGLRenderer renderer;
 
-Mesh cube;
+Map<Mesh, Vector3> cubeOffsets = new Map<Mesh, Vector3>(); 
+List<Mesh> cubes = new List<Mesh>();
 PointLight pointLight;
 
 void main()
 {
   init();
-
   window.animationFrame.then(render);
 }
 
@@ -32,25 +33,41 @@ void init()
   var shaderMaterial = new ShaderMaterial(vertexShader:vShader.text, 
                                           fragmentShader:fShader.text);
   
-  
-  var geometry = new CubeGeometry(1.0, 1.0, 1.0);
-  //var material = new MeshBasicMaterial(color: 0x00ff00);
+  var basePosition = new Vector3(1.0, 1.0, 1.0);
+  var geometry = new CubeGeometry(basePosition.x, basePosition.y, basePosition.z);
   var material = new MeshLambertMaterial(color: 0xcc0000);
-  cube = new Mesh(geometry, shaderMaterial);
-  
-  scene.add(cube);
+  Random rand = new Random();
+  for (int i = 0; i < 5; i++)
+  {
+    var cube = new Mesh(geometry, shaderMaterial);
+    var offset = new Vector3(rand.nextDouble() * 5.0 - 2.5, rand.nextDouble() * 5.0 - 2.5, 0.0);
+    cube.position += offset;
+    scene.add(cube);
+    cubes.add(cube);
+    cubeOffsets[cube] = offset;
+  }
   
   camera.position.z = 5.0;
 }
 
 void render(double frameTime)
 {
-  cube.rotation.x += 0.05;
-  cube.rotation.y += 0.05;
+  cubes.forEach((cube) => animate(cube));
   renderer.render(scene, camera);
   window.animationFrame.then(render);
 }
 
+void animate(Mesh mesh)
+{
+  mesh.rotation.x += 0.05;
+  mesh.rotation.y += 0.05;
+}
+
+void move(Mesh mesh, Vector3 pos, Vector3 offset)
+{
+  mesh.position.x = pos.x + offset.x;
+  mesh.position.y = pos.y + offset.y;
+}
 
 void mouseMove(MouseEvent e)
 {
@@ -66,6 +83,5 @@ void mouseMove(MouseEvent e)
   var distance = - camera.position.z / dir.z;
   
   var pos = camera.position.clone().add( dir * distance );
-  cube.position.x = pos.x;
-  cube.position.y = pos.y;
+  cubes.forEach((cube) => move(cube, pos, cubeOffsets[cube]));
 }
