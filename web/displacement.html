@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Perlin noise | Fireball explosion</title>
+        <meta charset="utf-8">
+    </head>
+
+    <body>
+        <div id="container"></div>
+    </body>
+
+    <script src="js/Three.js"></script>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+        varying vec2 vUv;
+        attribute float size;
+
+        void main()
+        {
+          vUv = uv;
+          vec3 newPosition = position + normal * size;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+        }
+    </script>
+
+    <script type="x-shader/x-vertex" id="fragmentShader">
+        varying vec2 vUv;
+        void main()
+        {
+          gl_FragColor = vec4(vec3(vUv, 0.), 1.);
+        }
+    </script>
+
+
+    <script type="application/dart" src="displacement.dart"></script>
+    <!-- for this next line to work, your pubspec.yaml file must have a dependency on 'browser' -->
+    <script src="packages/browser/dart.js"></script>
+
+</html>
