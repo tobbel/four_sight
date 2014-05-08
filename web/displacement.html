@@ -13,12 +13,16 @@
 
     <script type="x-shader/x-vertex" id="vertexShader">
         varying vec2 vUv;
-        attribute float size;
+        uniform float amplitude;
+        attribute float displacement;
 
         void main()
         {
           vUv = uv;
-          vec3 newPosition = position + normal * size;
+          //vec3 newPosition = position + normal * displacement;
+          vec3 newPosition =
+            position + normal *
+            vec3(displacement * amplitude);
           gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
         }
     </script>

@@ -14,7 +14,9 @@ ShaderMaterial material;
 Mesh mesh;
 Random rand = new Random();
 var attributes;
-var size;
+var displacement;
+var uniforms;
+var amplitude;
 
 void main()
 {
@@ -26,8 +28,11 @@ void init()
 {
   scene = new Scene();
   
-  size = new Attribute.float();
-  attributes = { "size" : size };
+  displacement = new Attribute.float();
+  attributes = { "displacement" : displacement };
+  
+  amplitude = new Uniform.float(0.0);
+  uniforms = { "amplitude" : amplitude };
   
   camera = new PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1.0, 10000.0);
   camera.position.z = 100.0;
@@ -36,12 +41,13 @@ void init()
   
   material = new ShaderMaterial(vertexShader: querySelector('#vertexShader').text, 
                                 fragmentShader: querySelector('#fragmentShader').text,
-                                attributes: attributes);
+                                attributes: attributes,
+                                uniforms: uniforms);
   
   mesh = new Mesh(new IcosahedronGeometry(20.0, 4.0), material);
   var vertices = mesh.geometry.vertices;
   for( var v = 0; v < vertices.length; v++ ) {
-      size.value.add(rand.nextDouble() * 4.0 - 2.0);
+    displacement.value.add(rand.nextDouble() * 4.0 - 2.0);
   }
   
   scene.add(mesh);
@@ -51,8 +57,11 @@ void init()
   document.body.append(renderer.domElement);
 }
 
+double animator = 0.0;
 void render(double frameTime)
 {
+  uniforms["amplitude"].value = sin(animator);
+  animator += 0.03;
   renderer.render(scene, camera);
   window.animationFrame.then(render);
 }
