@@ -46,7 +46,8 @@ void init()
   
   mesh = new Mesh(new IcosahedronGeometry(20.0, 4.0), material);
   var vertices = mesh.geometry.vertices;
-  for( var v = 0; v < vertices.length; v++ ) {
+  for( var v = 0; v < vertices.length; v++ ) 
+  {
     displacement.value.add(rand.nextDouble() * 4.0 - 2.0);
   }
   

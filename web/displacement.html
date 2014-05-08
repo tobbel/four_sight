@@ -1,15 +1,13 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Perlin noise | Fireball explosion</title>
+        <title>Displaced cube</title>
         <meta charset="utf-8">
     </head>
 
     <body>
         <div id="container"></div>
     </body>
-
-    <script src="js/Three.js"></script>
 
     <script type="x-shader/x-vertex" id="vertexShader">
         varying vec2 vUv;
@@ -19,7 +17,6 @@
         void main()
         {
           vUv = uv;
-          //vec3 newPosition = position + normal * displacement;
           vec3 newPosition =
             position + normal *
             vec3(displacement * amplitude);
