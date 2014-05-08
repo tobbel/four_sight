@@ -11,6 +11,8 @@ Map<Mesh, Vector3> cubeOffsets = new Map<Mesh, Vector3>();
 List<Mesh> cubes = new List<Mesh>();
 PointLight pointLight;
 
+var displacement, attributes;
+
 void main()
 {
   init();
@@ -27,21 +29,29 @@ void init()
   document.body.append(renderer.domElement);
 
   renderer.domElement.onMouseMove.listen(mouseMove);
+
+  displacement = new Attribute.float();
+  attributes = { "displacement" : displacement };
   
   var vShader = querySelector("#vertexshader");
   var fShader = querySelector("#fragmentshader");
-  var shaderMaterial = new ShaderMaterial(vertexShader:vShader.text, 
-                                          fragmentShader:fShader.text);
+  var shaderMaterial = new ShaderMaterial(vertexShader:   vShader.text, 
+                                          fragmentShader: fShader.text,
+                                          attributes:     attributes);
   
   var basePosition = new Vector3(1.0, 1.0, 1.0);
   var geometry = new CubeGeometry(basePosition.x, basePosition.y, basePosition.z);
-  var material = new MeshLambertMaterial(color: 0xcc0000);
   Random rand = new Random();
-  for (int i = 0; i < 5; i++)
+  //for (int i = 0; i < 5; i++)
   {
     var cube = new Mesh(geometry, shaderMaterial);
     var offset = new Vector3(rand.nextDouble() * 5.0 - 2.5, rand.nextDouble() * 5.0 - 2.5, 0.0);
     cube.position += offset;
+    var vertices = cube.geometry.vertices;
+    for( var v = 0; v < vertices.length; v++ ) 
+    {
+      displacement.value.add(rand.nextDouble() * 4.0 - 2.0);
+    }
     scene.add(cube);
     cubes.add(cube);
     cubeOffsets[cube] = offset;
